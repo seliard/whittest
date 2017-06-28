@@ -32,6 +32,39 @@ public class HotelService {
         return hotelList;
     }
 
+    public ResponseEntity<?> getHotel(String id) {
+        if (hotelExists(id)){
+            return ResponseEntity.ok(hotelList.stream().filter(h -> h.getId().equalsIgnoreCase(id)).findFirst().get());
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(id+" not found");
+        }
+    }
+
+    public ResponseEntity addHotel(Hotel hotel){
+        if (hotel.getId().isEmpty()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Id can't be empty.");
+        }
+        else {
+            if (hotelExists(hotel.getId())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(hotel.getId() + " already exists.");
+            } else {
+                if (verifyLat(hotel.getLoc().getLat()) == true) {
+                    if (verifyLon(hotel.getLoc().getLon()) == true) {
+                        hotelList.add(hotel);
+                        return ResponseEntity.ok("Hotel added successfully");
+                    }
+                    else {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Lon should be a value within -180 and 180.");
+                    }
+                }
+                else {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Lat should be a value within -90 and 90.");
+                }
+            }
+        }
+    }
+
     public boolean hotelExists(String id) {
         if (hotelList.stream().filter(h -> h.getId().equalsIgnoreCase(id)).findFirst().isPresent()){
             return true;
@@ -41,12 +74,21 @@ public class HotelService {
         }
     }
 
-    public ResponseEntity<?> getHotel(String id) {
-        if (hotelExists(id)){
-            return ResponseEntity.ok(hotelList.stream().filter(h -> h.getId().equalsIgnoreCase(id)).findFirst().get());
+    public boolean verifyLat(double lat){
+        if (lat >= -90 && lat <= 90){
+            return true;
         }
         else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(id+" not found");
+            return false;
+        }
+    }
+
+    public boolean verifyLon(double lon){
+        if (lon >= -180 && lon <= 180){
+            return true;
+        }
+        else {
+            return false;
         }
     }
 }

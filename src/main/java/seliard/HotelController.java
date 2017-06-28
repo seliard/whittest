@@ -2,9 +2,7 @@ package seliard;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,6 +19,11 @@ public class HotelController {
     @RequestMapping("/hotels")
     public List<Hotel> getHotels() {
         return hotelService.getHotels();
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/hotels")
+    public ResponseEntity addHotel(@RequestBody Hotel hotel) {
+        return hotelService.addHotel(hotel);
     }
 
     @RequestMapping("/hotels/{id}")
