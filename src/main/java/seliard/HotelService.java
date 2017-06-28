@@ -91,4 +91,35 @@ public class HotelService {
             return false;
         }
     }
+
+    public ResponseEntity updateHotel(String id, Hotel hotel){
+        if (hotel.getId().isEmpty()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Id can't be empty.");
+        }
+        if (!verifyLat(hotel.getLoc().getLat())){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Lat should be a value within -90 and 90.");
+        }
+        if (!verifyLon(hotel.getLoc().getLon())){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Lon should be a value within -180 and 180.");
+        }
+        else {
+            for (int i = 0; i < hotelList.size(); i++) {
+                Hotel h = hotelList.get(i);
+                if (h.getId().equals(id)) {
+                    hotelList.set(i, hotel);
+                }
+            }
+            return ResponseEntity.ok("Hotel " + id + " updated successfully");
+        }
+    }
+
+    public ResponseEntity deleteHotel(String id){
+        if (hotelExists(id)){
+            hotelList.removeIf(h -> h.getId().equals(id));
+            return ResponseEntity.ok("Hotel " + id + " deleted successfully");
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Hotel not found.");
+        }
+    }
 }
