@@ -14,14 +14,14 @@ The test is configured to run on http://localhost:57575
 
 Note: I tried to implement Swagger to automatically document the API, but it didn't work. It just outputs a blank Swagger page on http://localhost:57575/swagger-ui.html
 
+------
 
+# List of endpoints
 
-List of endpoints
-
-# GET /hotels
+## GET _/hotels_
 Retrieves the full list of prepopulated hotels. Should have 10 hotels initially.
 Example response:
-'''
+```json
 [
     {
         "id": "LONBLA",
@@ -124,13 +124,13 @@ Example response:
         }
     }
 ]
-'''
+```
 
-# POST /hotels
+## POST _/hotels_
 Adds a new hotel to the list.
 Requires headers - Content-type: application/json
 Payload example:
-'''
+```json
 {
     "id": "NEWHOTEL",
     "name": "New London Hotel",
@@ -141,17 +141,29 @@ Payload example:
         "lon": 0
     }
 }
-'''
+```
 
-# GET /hotels/{id}
+## GET _/hotels/{id}_
 Retrieves a specific hotel from the list.
 Example response:
+```json
+{
+    "id": "LONBLA",
+    "name": "London Blackfriars (Fleet Street)",
+    "loc": {
+        "id": "1",
+        "name": "Blackfriars",
+        "lat": 51.513104,
+        "lon": -0.105613
+    }
+}
+```
 
-# PUT /hotels/{id}
+## PUT _/hotels/{id}_
 Updates a specific hotel on the list.
 Requires headers - Content-type: application/json
 Payload example:
-'''
+```json
 {
     "id": "NEWHOTEL",
     "name": "New London Hotel",
@@ -162,20 +174,20 @@ Payload example:
         "lon": 0
     }
 }
-'''
+```
 
-# DELETE /hotels/{id}
+## DELETE _/hotels/{id}_
 Deletes a hotel from the list.
 Does not require a payload or any specific headers.
 
-# GET /hotels/{id}/{query}/{radius}
+## GET _/hotels/{id}/{query}/{radius}_
 Integrates with Foursquare and retrieves the top venues for a specific hotel within a search radius.
 **id** should be one of the existing hotels on the list.
 **query** can be anything you're looking for, e.g. (bars, cafes, nightclubs, casinos, etc.)
 **radius** should be a number between 0 and 100000. A good example would be between 500 and 1500.
 Example call and response:
 http://localhost:57575/hotels/LONBLA/bars/1000
-'''
+```json
 [
     {
         "id": "4b9a90e1f964a520dbc135e3",
@@ -274,4 +286,4 @@ http://localhost:57575/hotels/LONBLA/bars/1000
         "url": null
     }
 ]
-'''
+```
