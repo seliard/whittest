@@ -1,14 +1,27 @@
 # whittest
 Foursquare integration
 
+## How to run
+
+1. Clone the project onto your machine.
+2. Navigate to the root folder of this project.
+3. Open a terminal window and execute the command "mvn spring-boot:run"
+4. Try out the API using a tool to make XHRs, such as Postman.
+
+
+The test is configured to run on http://localhost:57575
+
+
+Note: I tried to implement Swagger to automatically document the API, but it didn't work. It just outputs a blank Swagger page on http://localhost:57575/swagger-ui.html
+
+
 
 List of endpoints
-
 
 # GET /hotels
 Retrieves the full list of prepopulated hotels. Should have 10 hotels initially.
 Example response:
-{code}
+'''
 [
     {
         "id": "LONBLA",
@@ -111,12 +124,13 @@ Example response:
         }
     }
 ]
-{code}
+'''
 
 # POST /hotels
 Adds a new hotel to the list.
 Requires headers - Content-type: application/json
 Payload example:
+'''
 {
     "id": "NEWHOTEL",
     "name": "New London Hotel",
@@ -127,6 +141,7 @@ Payload example:
         "lon": 0
     }
 }
+'''
 
 # GET /hotels/{id}
 Retrieves a specific hotel from the list.
@@ -136,6 +151,7 @@ Example response:
 Updates a specific hotel on the list.
 Requires headers - Content-type: application/json
 Payload example:
+'''
 {
     "id": "NEWHOTEL",
     "name": "New London Hotel",
@@ -146,6 +162,7 @@ Payload example:
         "lon": 0
     }
 }
+'''
 
 # DELETE /hotels/{id}
 Deletes a hotel from the list.
@@ -153,11 +170,12 @@ Does not require a payload or any specific headers.
 
 # GET /hotels/{id}/{query}/{radius}
 Integrates with Foursquare and retrieves the top venues for a specific hotel within a search radius.
-id should be one of the existing hotels on the list.
-query can be anything you're looking for, e.g. (bars, cafes, nightclubs, casinos, etc.)
-radius should be a number between 0 and 100000. A good example would be between 500 and 1500.
+**id** should be one of the existing hotels on the list.
+**query** can be anything you're looking for, e.g. (bars, cafes, nightclubs, casinos, etc.)
+**radius** should be a number between 0 and 100000. A good example would be between 500 and 1500.
 Example call and response:
 http://localhost:57575/hotels/LONBLA/bars/1000
+'''
 [
     {
         "id": "4b9a90e1f964a520dbc135e3",
@@ -256,3 +274,4 @@ http://localhost:57575/hotels/LONBLA/bars/1000
         "url": null
     }
 ]
+'''
