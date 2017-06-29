@@ -3,6 +3,8 @@ package seliard;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import seliard.foursquare.FoursquareSearch;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -92,25 +94,46 @@ public class HotelService {
         }
     }
 
-    public ResponseEntity updateHotel(String id, Hotel hotel){
-        if (hotel.getId().isEmpty()){
+    public ResponseEntity updateHotel(String id, Hotel hotel) {
+        if (hotel.getId().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Id can't be empty.");
         }
-        if (!verifyLat(hotel.getLoc().getLat())){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Lat should be a value within -90 and 90.");
-        }
-        if (!verifyLon(hotel.getLoc().getLon())){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Lon should be a value within -180 and 180.");
-        }
         else {
-            for (int i = 0; i < hotelList.size(); i++) {
-                Hotel h = hotelList.get(i);
-                if (h.getId().equals(id)) {
-                    hotelList.set(i, hotel);
-                }
+            if (!verifyLat(hotel.getLoc().getLat())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Lat should be a value within -90 and 90.");
             }
-            return ResponseEntity.ok("Hotel " + id + " updated successfully");
+            if (!verifyLon(hotel.getLoc().getLon())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Lon should be a value within -180 and 180.");
+            }
+            if (hotelExists(id)) {
+                if (!id.equalsIgnoreCase(hotel.getId())) {
+                    if (hotelExists(hotel.getId())) {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Hotel id already exists.");
+                    }
+                    else {
+                        for (int i = 0; i < hotelList.size(); i++) {
+                            Hotel h = hotelList.get(i);
+                            if (h.getId().equalsIgnoreCase(id)) {
+                                hotelList.set(i, hotel);
+                                return ResponseEntity.ok("Hotel " + id + " updated successfully");
+                            }
+                        }
+                    }
+                }
+                else {
+                    for (int i = 0; i < hotelList.size(); i++) {
+                        Hotel h = hotelList.get(i);
+                        if (h.getId().equalsIgnoreCase(id)) {
+                            hotelList.set(i, hotel);
+                            return ResponseEntity.ok("Hotel " + id + " updated successfully");
+                        }
+                    }
+                }
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Hotel not found.");
+            }
         }
+        return null;
     }
 
     public ResponseEntity deleteHotel(String id){
@@ -120,6 +143,37 @@ public class HotelService {
         }
         else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Hotel not found.");
+        }
+    }
+
+    public ResponseEntity<?> getLocationsFrom4SQ(String id, String query, String radius) {
+        if (hotelExists(id)) {
+            ResponseEntity<Hotel> h = (ResponseEntity<Hotel>) getHotel(id);
+            String protocol = "https";
+            String domain = "api.foursquare.com";
+            String endpoint = "/v2/venues/search";
+            String v = "20161016";
+            String ll = h.getBody().getLoc().getLat() + "," + h.getBody().getLoc().getLon();
+            String intent = "browse";
+            String clientId = "CTBUOKXD3S41U3QN4ALR23ANGL40LWKJGE0VQC2GL4LYIXTC";
+            String clientSecret = "E2CYW0YRMGZPS5KDTNVBQAGQDWUMKMSZHNXRBJ1INVCLNBKC";
+
+            String apiCall = protocol + "://" + domain + endpoint + "?v=" + v + "&ll=" + ll + "&query=" + query + "&intent=" + intent + "&client_id=" + clientId + "&client_secret=" + clientSecret + "&radius=" + radius;
+
+            System.out.println(apiCall);
+
+            RestTemplate restTemplate = new RestTemplate();
+            FoursquareSearch search = restTemplate.getForObject(apiCall, FoursquareSearch.class);
+
+            if (search.getMeta().getCode() == 200){
+                return ResponseEntity.ok(search.getResponse().getVenues());
+            }
+            else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nothing found near " + ll + ".");
+            }
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(id + " does not exist.");
         }
     }
 }

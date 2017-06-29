@@ -40,4 +40,9 @@ public class HotelController {
     public ResponseEntity DeleteHotel(@PathVariable String id) {
         return hotelService.deleteHotel(id);
     }
+
+    @RequestMapping("/hotels/{id}/{query}/{radius}")
+    public ResponseEntity<?> getLocationsFrom4SQ(@PathVariable String id, @PathVariable String query, @PathVariable String radius) {
+        return hotelService.getLocationsFrom4SQ(id, query, radius);
+    }
 }
