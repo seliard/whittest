@@ -13,7 +13,7 @@ public class HotelLocation {
     public HotelLocation() {
     }
 
-    public HotelLocation(String id, String name, double lat, double lon) {
+    HotelLocation(String id, String name, double lat, double lon) {
         this.id = id;
         this.name = name;
         this.lat = lat;
@@ -36,7 +36,7 @@ public class HotelLocation {
         this.name = name;
     }
 
-    public double getLat() {
+    double getLat() {
         return lat;
     }
 
@@ -44,7 +44,7 @@ public class HotelLocation {
         this.lat = lat;
     }
 
-    public double getLon() {
+    double getLon() {
         return lon;
     }
 
