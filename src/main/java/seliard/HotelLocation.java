@@ -1,17 +1,32 @@
 package seliard;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 /**
  * Created by Santiago on 28/06/2017.
  */
 public class HotelLocation {
 
-    private String id;
-    private String name;
-    private double lat;
-    private double lon;
+    private final int LON_MIN = -180;
+    private final int LON_MAX = 180;
 
-    public HotelLocation() {
-    }
+    private final int LAT_MIN = -90;
+    private final int LAT_MAX = 90;
+
+    @NotNull
+    private String id;
+    @NotNull
+    private String name;
+    @NotNull
+    @Min(LAT_MIN)
+    @Max(LAT_MAX)
+    private double lat;
+    @NotNull
+    @Min(LON_MIN)
+    @Max(LON_MAX)
+    private double lon;
 
     HotelLocation(String id, String name, double lat, double lon) {
         this.id = id;
@@ -36,7 +51,7 @@ public class HotelLocation {
         this.name = name;
     }
 
-    double getLat() {
+    public double getLat() {
         return lat;
     }
 
@@ -44,7 +59,7 @@ public class HotelLocation {
         this.lat = lat;
     }
 
-    double getLon() {
+    public double getLon() {
         return lon;
     }
 

@@ -8,7 +8,6 @@ import java.util.List;
  * Created by Santiago on 29/06/2017.
  */
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Response {
 
     private List<Venue> venues;

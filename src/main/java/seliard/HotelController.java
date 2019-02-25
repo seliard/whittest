@@ -13,8 +13,11 @@ import java.util.List;
 @RestController
 public class HotelController {
 
-    @Autowired
-    private HotelService hotelService;
+    private final HotelService hotelService;
+
+    public HotelController(HotelService hotelService) {
+        this.hotelService = hotelService;
+    }
 
     @RequestMapping("/hotels")
     public List<Hotel> getHotels() {

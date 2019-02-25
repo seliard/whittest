@@ -15,7 +15,7 @@ import java.util.List;
  */
 
 @Service
-class HotelService {
+public class HotelService {
 
     private List<Hotel> hotelList = new ArrayList<>(Arrays.asList(
             new Hotel("LONBLA", "London Blackfriars (Fleet Street)", new HotelLocation("1", "Blackfriars", 51.513104, -0.105613)),

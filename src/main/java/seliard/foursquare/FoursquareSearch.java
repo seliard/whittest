@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  * Created by Santiago on 29/06/2017.
  */
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class FoursquareSearch {
 
     private Meta meta;

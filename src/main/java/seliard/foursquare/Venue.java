@@ -8,13 +8,12 @@ import java.util.List;
  * Created by Santiago on 29/06/2017.
  */
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Venue {
 
     private String id;
     private String name;
     private Location location;
-    protected List<Category> categories;
+    private List<Category> categories;
     private String url;
 
     public Venue() {
