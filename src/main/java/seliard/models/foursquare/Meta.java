@@ -7,6 +7,8 @@ package seliard.models.foursquare;
 public class Meta {
 
     private int code;
+    private String errorType;
+    private String errorDetail;
 
     public Meta() {
     }
@@ -23,4 +25,19 @@ public class Meta {
         this.code = code;
     }
 
+    public String getErrorType() {
+        return errorType;
+    }
+
+    public void setErrorType(String errorType) {
+        this.errorType = errorType;
+    }
+
+    public String getErrorDetail() {
+        return errorDetail;
+    }
+
+    public void setErrorDetail(String errorDetail) {
+        this.errorDetail = errorDetail;
+    }
 }

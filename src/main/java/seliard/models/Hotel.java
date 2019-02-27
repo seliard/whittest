@@ -1,15 +1,13 @@
 package seliard.models;
 
-import javax.validation.constraints.NotNull;
-
 /**
  * Created by Santiago on 28/06/2017.
  */
+
 public class Hotel {
 
     private String id;
     private String name;
-    @NotNull
     private HotelLocation loc;
 
     public Hotel(String id, String name, HotelLocation loc) {
