@@ -1,11 +1,16 @@
-package seliard;
+package seliard.service;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import seliard.foursquare.FoursquareSearch;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
+import seliard.models.Hotel;
+import seliard.models.HotelLocation;
+import seliard.models.foursquare.FoursquareSearch;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,6 +21,12 @@ import java.util.List;
 
 @Service
 public class HotelService {
+
+    private static final String FOURSQUARE_DOMAIN = "api.foursquare.com";
+    private static final String FOURSQUARE_PATH = "/v2/venues/search";
+    private static final String FOURSQUARE_API_VERSION = "20161016";
+    private static final String FOURSQUARE_CLIENT_ID = "CTBUOKXD3S41U3QN4ALR23ANGL40LWKJGE0VQC2GL4LYIXTC";
+    private static final String FOURSQUARE_CLIENT_SECRET = "E2CYW0YRMGZPS5KDTNVBQAGQDWUMKMSZHNXRBJ1INVCLNBKC";
 
     private List<Hotel> hotelList = new ArrayList<>(Arrays.asList(
             new Hotel("LONBLA", "London Blackfriars (Fleet Street)", new HotelLocation("1", "Blackfriars", 51.513104, -0.105613)),
@@ -30,11 +41,11 @@ public class HotelService {
             new Hotel("KINPTI", "London Kings Cross", new HotelLocation("10", "Kings Cross", 51.532001, -0.122086))
     ));
 
-    List<Hotel> getHotels() {
+    public List<Hotel> getHotels() {
         return hotelList;
     }
 
-    ResponseEntity<?> getHotel(String id) {
+    public ResponseEntity getHotel(String id) {
         if (hotelExists(id)) {
             return ResponseEntity.ok(hotelList.stream().filter(h -> h.getId().equalsIgnoreCase(id)).findFirst().get());
         } else {
@@ -42,7 +53,7 @@ public class HotelService {
         }
     }
 
-    ResponseEntity addHotel(Hotel hotel) {
+    public ResponseEntity addHotel(Hotel hotel) {
         if (hotel.getId().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Id can't be empty.");
         } else {
@@ -75,7 +86,7 @@ public class HotelService {
         return lon >= -180 && lon <= 180;
     }
 
-    ResponseEntity updateHotel(String id, Hotel hotel) {
+    public ResponseEntity updateHotel(String id, Hotel hotel) {
         if (hotel.getId().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Id can't be empty.");
         } else {
@@ -114,7 +125,7 @@ public class HotelService {
         return null;
     }
 
-    ResponseEntity deleteHotel(String id) {
+    public ResponseEntity deleteHotel(String id) {
         if (hotelExists(id)) {
             hotelList.removeIf(h -> h.getId().equals(id));
             return ResponseEntity.ok("Hotel " + id + " deleted successfully");
@@ -123,32 +134,41 @@ public class HotelService {
         }
     }
 
-    ResponseEntity<?> getLocationsFrom4SQ(String id, String query, String radius) {
+    public ResponseEntity<?> getLocationsFrom4SQ(String id, String query, String radius) {
         if (hotelExists(id)) {
-            ResponseEntity<Hotel> h = (ResponseEntity<Hotel>) getHotel(id);
-            String protocol = "https";
-            String domain = "api.foursquare.com";
-            String endpoint = "/v2/venues/search";
-            String v = "20161016";
-            String ll = h.getBody().getLoc().getLat() + "," + h.getBody().getLoc().getLon();
-            String intent = "browse";
-            String clientId = "CTBUOKXD3S41U3QN4ALR23ANGL40LWKJGE0VQC2GL4LYIXTC";
-            String clientSecret = "E2CYW0YRMGZPS5KDTNVBQAGQDWUMKMSZHNXRBJ1INVCLNBKC";
+            ResponseEntity<Hotel> hotel = (ResponseEntity<Hotel>) getHotel(id);
 
-            String apiCall = protocol + "://" + domain + endpoint + "?v=" + v + "&ll=" + ll + "&query=" + query + "&intent=" + intent + "&client_id=" + clientId + "&client_secret=" + clientSecret + "&radius=" + radius;
+            URI foursquareUri = getFoursquareURI(hotel, query, radius);
 
-            System.out.println(apiCall);
+            System.out.println(foursquareUri.toString());
 
             RestTemplate restTemplate = new RestTemplate();
-            FoursquareSearch search = restTemplate.getForObject(apiCall, FoursquareSearch.class);
+            FoursquareSearch search = restTemplate.getForObject(foursquareUri, FoursquareSearch.class);
 
             if (search.getMeta().getCode() == 200) {
                 return ResponseEntity.ok(search.getResponse().getVenues());
             } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nothing found near " + ll + ".");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nothing found near " + hotel.getBody().getId() + ".");
             }
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(id + " does not exist.");
         }
+    }
+
+    private URI getFoursquareURI(ResponseEntity<Hotel> hotel, String query, String radius) {
+        UriComponents uriComponentsBuilder = UriComponentsBuilder.newInstance()
+                .scheme("https")
+                .host(FOURSQUARE_DOMAIN)
+                .path(FOURSQUARE_PATH)
+                .queryParam("v", FOURSQUARE_API_VERSION)
+                .queryParam("ll", hotel.getBody().getLoc().getLat() + "," + hotel.getBody().getLoc().getLon())
+                .queryParam("query", query)
+                .queryParam("intent", "browse")
+                .queryParam("client_id", FOURSQUARE_CLIENT_ID)
+                .queryParam("client_secret", FOURSQUARE_CLIENT_SECRET)
+                .queryParam("radius", radius)
+                .buildAndExpand();
+
+        return uriComponentsBuilder.toUri();
     }
 }

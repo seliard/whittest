@@ -1,6 +1,4 @@
-package seliard.foursquare;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+package seliard.models.foursquare;
 
 /**
  * Created by Santiago on 29/06/2017.

@@ -2,13 +2,15 @@ package seliard;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import static org.junit.Assert.assertEquals;
-
 import org.springframework.test.context.junit4.SpringRunner;
+import seliard.models.Hotel;
+import seliard.models.HotelLocation;
+import seliard.service.HotelService;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 public class HotelServiceTest {

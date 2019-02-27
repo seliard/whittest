@@ -1,6 +1,4 @@
-package seliard.foursquare;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+package seliard.models.foursquare;
 
 import java.util.List;
 
@@ -12,11 +10,11 @@ public class Response {
 
     private List<Venue> venues;
 
-    public Response(List<Venue> venues) {
-        this.venues = venues;
+    public Response() {
     }
 
-    public Response() {
+    public Response(List<Venue> venues) {
+        this.venues = venues;
     }
 
     public List<Venue> getVenues() {

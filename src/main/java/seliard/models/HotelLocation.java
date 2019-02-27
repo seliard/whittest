@@ -1,4 +1,4 @@
-package seliard;
+package seliard.models;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -9,11 +9,11 @@ import javax.validation.constraints.NotNull;
  */
 public class HotelLocation {
 
-    private final int LON_MIN = -180;
-    private final int LON_MAX = 180;
+    private static final int LON_MIN = -180;
+    private static final int LON_MAX = 180;
 
-    private final int LAT_MIN = -90;
-    private final int LAT_MAX = 90;
+    private static final int LAT_MIN = -90;
+    private static final int LAT_MAX = 90;
 
     @NotNull
     private String id;
@@ -28,7 +28,7 @@ public class HotelLocation {
     @Max(LON_MAX)
     private double lon;
 
-    HotelLocation(String id, String name, double lat, double lon) {
+    public HotelLocation(String id, String name, double lat, double lon) {
         this.id = id;
         this.name = name;
         this.lat = lat;

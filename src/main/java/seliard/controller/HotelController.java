@@ -1,8 +1,9 @@
-package seliard;
+package seliard.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import seliard.models.Hotel;
+import seliard.service.HotelService;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package seliard;
+package seliard.models;
 
 import javax.validation.constraints.NotNull;
 
